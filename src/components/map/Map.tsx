@@ -2,6 +2,7 @@ import React, { useRef, useEffect, memo } from 'react';
 import leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Offer } from '../../types/offer';
+import { MapConfig } from '../../const/const';
 
 type MapProps = {
   offers: Offer[];
@@ -16,18 +17,16 @@ type MapProps = {
   activeOfferId?: string | null;
 };
 
-const DEFAULT_ZOOM = 13;
-
 const DEFAULT_ICON = leaflet.icon({
   iconUrl: 'img/pin.svg',
-  iconSize: [27, 39],
-  iconAnchor: [13.5, 39],
+  iconSize: MapConfig.IconSize,
+  iconAnchor: MapConfig.IconAnchor,
 });
 
 const ACTIVE_ICON = leaflet.icon({
   iconUrl: 'img/pin-active.svg',
-  iconSize: [27, 39],
-  iconAnchor: [13.5, 39],
+  iconSize: MapConfig.IconSize,
+  iconAnchor: MapConfig.IconAnchor,
 });
 
 const Map: React.FC<MapProps> = ({ offers, city, activeOfferId }) => {
@@ -46,7 +45,7 @@ const Map: React.FC<MapProps> = ({ offers, city, activeOfferId }) => {
           lat: city.location.latitude,
           lng: city.location.longitude,
         },
-        zoom: city.location.zoom ?? DEFAULT_ZOOM,
+        zoom: city.location.zoom ?? MapConfig.DefaultZoom,
       });
 
       leaflet
@@ -61,7 +60,7 @@ const Map: React.FC<MapProps> = ({ offers, city, activeOfferId }) => {
     } else {
       mapInstanceRef.current.setView(
         [city.location.latitude, city.location.longitude],
-        city.location.zoom ?? DEFAULT_ZOOM
+        city.location.zoom ?? MapConfig.DefaultZoom
       );
     }
   }, [city]);

@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from './index';
+import { OfferConfig } from '../const/const';
 
 export const selectCity = (state: RootState) => state.offers.city;
 export const selectOffers = (state: RootState) => state.offers.offers;
@@ -38,6 +39,6 @@ export const selectSortedComments = createSelector(
     const sortedComments = [...comments].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-    return sortedComments.slice(0, 10);
+    return sortedComments.slice(0, OfferConfig.MaxComments);
   }
 );

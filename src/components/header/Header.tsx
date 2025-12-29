@@ -16,7 +16,7 @@ const Header: React.FC<HeaderProps> = ({ showNav = true }) => {
   const user = useSelector(selectUser);
   const favoriteCount = useSelector(selectFavoriteCount);
 
-  const handleLogout = useCallback((evt: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleLogoutClick = useCallback((evt: React.MouseEvent<HTMLAnchorElement>) => {
     evt.preventDefault();
     dispatch(logoutAction());
   }, [dispatch]);
@@ -44,7 +44,7 @@ const Header: React.FC<HeaderProps> = ({ showNav = true }) => {
                       </Link>
                     </li>
                     <li className="header__nav-item">
-                      <a className="header__nav-link" href="#" onClick={handleLogout}>
+                      <a className="header__nav-link" href="#" onClick={handleLogoutClick}>
                         <span className="header__signout">Sign out</span>
                       </a>
                     </li>

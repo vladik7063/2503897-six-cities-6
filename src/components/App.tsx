@@ -5,11 +5,11 @@ import { selectIsOffersLoading, selectFavoriteOffers, selectAuthorizationStatus 
 import { fetchFavoritesAction } from '../store/api-actions';
 import { AuthorizationStatus } from '../types';
 import { AppDispatch } from '../store';
-import MainPage from './main-page';
-import LoginPage from './login-page';
-import FavoritesPage from './favorites-page';
-import OfferPage from './offer-page';
-import NotFoundPage from './not-found-page';
+import MainPage from '../pages/main-page';
+import LoginPage from '../pages/login-page';
+import FavoritesPage from '../pages/favorites-page';
+import OfferPage from '../pages/offer-page';
+import NotFoundPage from '../pages/not-found-page';
 import PrivateRoute from './private-route';
 import Spinner from './spinner';
 
