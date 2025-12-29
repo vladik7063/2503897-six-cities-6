@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Offer } from '../types/offer';
+import { Offer, Review } from '../types/offer';
 import MainPage from './main-page';
 import LoginPage from './login-page';
 import FavoritesPage from './favorites-page';
@@ -10,9 +10,10 @@ import PrivateRoute from './private-route';
 
 interface AppProps {
   offers: Offer[];
+  reviews: Review[];
 }
 
-const App: React.FC<AppProps> = ({ offers }) => {
+const App: React.FC<AppProps> = ({ offers, reviews }) => {
   const favoriteOffers = offers.filter((offer) => offer.isFavorite);
 
   return (
@@ -28,7 +29,7 @@ const App: React.FC<AppProps> = ({ offers }) => {
             </PrivateRoute>
           }
         />
-        <Route path="/offer/:id" element={<OfferPage offers={offers} />} />
+        <Route path="/offer/:id" element={<OfferPage offers={offers} reviews={reviews}/>} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

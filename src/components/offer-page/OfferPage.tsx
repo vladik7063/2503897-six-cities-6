@@ -1,20 +1,33 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Offer } from '../../types/offer';
+import { Offer, Review } from '../../types/offer';
+import { CITIES } from '../../const/cities';
 import ReviewForm from '../review-form';
 import PlaceCard from '../place-card';
+import ReviewsList from '../reviews-list';
+import Map from '../map';
 
 interface OfferPageProps {
   offers: Offer[];
+  reviews: Review[];
 }
 
-const OfferPage: React.FC<OfferPageProps> = ({ offers }) => {
+const OfferPage: React.FC<OfferPageProps> = ({ offers, reviews }) => {
   const { id } = useParams<{ id: string }>();
   const offer = offers.find((o) => o.id === id);
-  const nearbyOffers = offers.filter((o) => o.id !== id).slice(0, 3);
 
   if (!offer) {
     return <div>Offer not found</div>;
+  }
+
+  const nearbyOffers = offers.filter((o) => o.id !== offer.id).slice(0, 3);
+
+  const mapCity = CITIES.find(
+    (city) => city.name === offer.city
+  );
+
+  if (!mapCity) {
+    return <div>City not found</div>;
   }
 
   return (
@@ -92,7 +105,7 @@ const OfferPage: React.FC<OfferPageProps> = ({ offers }) => {
                   {offer.bedrooms} Bedroom{offer.bedrooms > 1 ? 's' : ''}
                 </li>
                 <li className="offer__feature offer__feature--adults">
-                Max {offer.maxAdults} adult{offer.maxAdults > 1 ? 's' : ''}
+                  Max {offer.maxAdults} adult{offer.maxAdults > 1 ? 's' : ''}
                 </li>
               </ul>
               <div className="offer__price">
@@ -131,36 +144,17 @@ const OfferPage: React.FC<OfferPageProps> = ({ offers }) => {
                 </div>
               </div>
               <section className="offer__reviews reviews">
-                <h2 className="reviews__title">Reviews &middot; <span className="reviews__amount">1</span></h2>
-                <ul className="reviews__list">
-                  <li className="reviews__item">
-                    <div className="reviews__user user">
-                      <div className="reviews__avatar-wrapper user__avatar-wrapper">
-                        <img className="reviews__avatar user__avatar" src="img/avatar-max.jpg" width="54" height="54" alt="Reviews avatar" />
-                      </div>
-                      <span className="reviews__user-name">
-                      Max
-                      </span>
-                    </div>
-                    <div className="reviews__info">
-                      <div className="reviews__rating rating">
-                        <div className="reviews__stars rating__stars">
-                          <span style={{width: '80%'}}></span>
-                          <span className="visually-hidden">Rating</span>
-                        </div>
-                      </div>
-                      <p className="reviews__text">
-                      A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam. The building is green and from 18th century.
-                      </p>
-                      <time className="reviews__time" dateTime="2019-04-24">April 2019</time>
-                    </div>
-                  </li>
-                </ul>
+                <ReviewsList reviews={reviews} />
                 <ReviewForm />
               </section>
             </div>
           </div>
-          <section className="offer__map map"></section>
+          <section className="offer__map map">
+            <Map
+              offers={nearbyOffers}
+              city={mapCity}
+            />
+          </section>
         </section>
         <div className="container">
           <section className="near-places places">
