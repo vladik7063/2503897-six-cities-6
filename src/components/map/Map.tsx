@@ -10,11 +10,13 @@ type MapProps = {
     location: {
       latitude: number;
       longitude: number;
-      zoom: number;
+      zoom?: number;
     };
   };
   activeOfferId?: string | null;
 };
+
+const DEFAULT_ZOOM = 13;
 
 const DEFAULT_ICON = leaflet.icon({
   iconUrl: 'img/pin.svg',
@@ -44,7 +46,7 @@ const Map: React.FC<MapProps> = ({ offers, city, activeOfferId }) => {
           lat: city.location.latitude,
           lng: city.location.longitude,
         },
-        zoom: city.location.zoom,
+        zoom: city.location.zoom ?? DEFAULT_ZOOM,
       });
 
       leaflet
@@ -59,7 +61,7 @@ const Map: React.FC<MapProps> = ({ offers, city, activeOfferId }) => {
     } else {
       mapInstanceRef.current.setView(
         [city.location.latitude, city.location.longitude],
-        city.location.zoom
+        city.location.zoom ?? DEFAULT_ZOOM
       );
     }
   }, [city]);

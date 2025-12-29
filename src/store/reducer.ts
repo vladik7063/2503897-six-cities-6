@@ -1,7 +1,16 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { Offer, AuthorizationStatus, UserData } from '../types';
+import { Offer, AuthorizationStatus, UserData, Review } from '../types';
 import { changeCity } from './action';
-import { fetchOffersAction, checkAuthAction, loginAction, logoutAction } from './api-actions';
+import {
+  fetchOffersAction,
+  fetchOfferAction,
+  fetchNearbyOffersAction,
+  fetchCommentsAction,
+  postCommentAction,
+  checkAuthAction,
+  loginAction,
+  logoutAction,
+} from './api-actions';
 
 type State = {
   city: string;
@@ -9,6 +18,11 @@ type State = {
   isOffersLoading: boolean;
   authorizationStatus: AuthorizationStatus;
   user: UserData | null;
+  currentOffer: Offer | null;
+  nearbyOffers: Offer[];
+  comments: Review[];
+  isOfferLoading: boolean;
+  isOfferNotFound: boolean;
 };
 
 const initialState: State = {
@@ -17,6 +31,11 @@ const initialState: State = {
   isOffersLoading: false,
   authorizationStatus: AuthorizationStatus.Unknown,
   user: null,
+  currentOffer: null,
+  nearbyOffers: [],
+  comments: [],
+  isOfferLoading: false,
+  isOfferNotFound: false,
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -53,6 +72,27 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(logoutAction.fulfilled, (state) => {
       state.authorizationStatus = AuthorizationStatus.NoAuth;
       state.user = null;
+    })
+    .addCase(fetchOfferAction.pending, (state) => {
+      state.isOfferLoading = true;
+      state.isOfferNotFound = false;
+    })
+    .addCase(fetchOfferAction.fulfilled, (state, action) => {
+      state.currentOffer = action.payload;
+      state.isOfferLoading = false;
+    })
+    .addCase(fetchOfferAction.rejected, (state) => {
+      state.isOfferLoading = false;
+      state.isOfferNotFound = true;
+    })
+    .addCase(fetchNearbyOffersAction.fulfilled, (state, action) => {
+      state.nearbyOffers = action.payload;
+    })
+    .addCase(fetchCommentsAction.fulfilled, (state, action) => {
+      state.comments = action.payload;
+    })
+    .addCase(postCommentAction.fulfilled, (state, action) => {
+      state.comments.push(action.payload);
     });
 });
 
