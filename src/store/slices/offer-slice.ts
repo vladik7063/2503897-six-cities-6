@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { Offer, Review } from '../../types';
-import { fetchOfferAction, fetchNearbyOffersAction, fetchCommentsAction, postCommentAction } from '../api-actions';
+import { fetchOfferAction, fetchNearbyOffersAction, fetchCommentsAction, postCommentAction, toggleFavoriteAction } from '../api-actions';
 
 type OfferState = {
   currentOffer: Offer | null;
@@ -44,6 +44,16 @@ const offerSlice = createSlice({
       })
       .addCase(postCommentAction.fulfilled, (state, action) => {
         state.comments.push(action.payload);
+      })
+      .addCase(toggleFavoriteAction.fulfilled, (state, action) => {
+        const updatedOffer = action.payload;
+        if (state.currentOffer && state.currentOffer.id === updatedOffer.id) {
+          state.currentOffer.isFavorite = updatedOffer.isFavorite;
+        }
+        const nearbyIndex = state.nearbyOffers.findIndex((offer) => offer.id === updatedOffer.id);
+        if (nearbyIndex !== -1) {
+          state.nearbyOffers[nearbyIndex].isFavorite = updatedOffer.isFavorite;
+        }
       });
   },
 });

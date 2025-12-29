@@ -67,3 +67,24 @@ export const logoutAction = createAsyncThunk<void, undefined, AppThunkApiConfig>
     dropToken();
   }
 );
+
+export const fetchFavoritesAction = createAsyncThunk<Offer[], undefined, AppThunkApiConfig>(
+  'favorites/fetch',
+  async (_arg, { extra: api }) => {
+    const { data } = await api.get<Offer[]>('/favorite');
+    return data;
+  }
+);
+
+export type FavoriteData = {
+  offerId: string;
+  status: 0 | 1;
+};
+
+export const toggleFavoriteAction = createAsyncThunk<Offer, FavoriteData, AppThunkApiConfig>(
+  'favorite/toggle',
+  async ({ offerId, status }, { extra: api }) => {
+    const { data } = await api.post<Offer>(`/favorite/${offerId}/${status}`);
+    return data;
+  }
+);

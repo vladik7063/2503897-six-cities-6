@@ -1,6 +1,10 @@
 import React, { memo, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { Offer } from '../../types/offer';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Offer, AuthorizationStatus } from '../../types';
+import { AppDispatch } from '../../store';
+import { toggleFavoriteAction } from '../../store/api-actions';
+import { selectAuthorizationStatus } from '../../store/selectors';
 
 type PlaceCardVariant = 'cities' | 'favorites' | 'near-places';
 
@@ -17,47 +21,40 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
   onMouseEnter,
   onMouseLeave,
 }) => {
-  const {
-    id,
-    title,
-    type,
-    price,
-    rating,
-    previewImage,
-    isPremium,
-    isFavorite,
-  } = offer;
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
+  const { id, title, type, price, rating, previewImage, isPremium, isFavorite } = offer;
 
-  const imageSizeMap: Record<PlaceCardVariant, { width: number; height: number }> = {
-    favorites: { width: 150, height: 110 },
-    cities: { width: 260, height: 200 },
-    'near-places': { width: 260, height: 200 },
+  const imageSize = variant === 'favorites'
+    ? { width: 150, height: 110 }
+    : { width: 260, height: 200 };
+
+  const getCardClass = () => {
+    if (variant === 'favorites') {
+      return 'favorites__card place-card';
+    }
+    if (variant === 'near-places') {
+      return 'near-places__card place-card';
+    }
+    return 'cities__card place-card';
   };
+  const cardClass = getCardClass();
 
-  const imageSize = imageSizeMap[variant];
-
-  const cardClassMap: Record<PlaceCardVariant, string> = {
-    favorites: 'favorites__card place-card',
-    'near-places': 'near-places__card place-card',
-    cities: 'cities__card place-card',
+  const getImageWrapperClass = () => {
+    if (variant === 'favorites') {
+      return 'favorites__image-wrapper place-card__image-wrapper';
+    }
+    if (variant === 'near-places') {
+      return 'near-places__image-wrapper place-card__image-wrapper';
+    }
+    return 'cities__image-wrapper place-card__image-wrapper';
   };
+  const imageWrapperClass = getImageWrapperClass();
 
-  const imageWrapperClassMap: Record<PlaceCardVariant, string> = {
-    favorites: 'favorites__image-wrapper place-card__image-wrapper',
-    'near-places': 'near-places__image-wrapper place-card__image-wrapper',
-    cities: 'cities__image-wrapper place-card__image-wrapper',
-  };
-
-  const infoClass =
-    variant === 'favorites'
-      ? 'favorites__card-info place-card__info'
-      : 'place-card__info';
-
-  const cardClassName = cardClassMap[variant];
-  const imageWrapperClassName = imageWrapperClassMap[variant];
-  const bookmarkButtonClassName = isFavorite
-    ? 'place-card__bookmark-button place-card__bookmark-button--active button'
-    : 'place-card__bookmark-button button';
+  const infoClass = variant === 'favorites'
+    ? 'favorites__card-info place-card__info'
+    : 'place-card__info';
 
   const handleMouseEnter = useCallback(() => {
     onMouseEnter?.(id);
@@ -67,11 +64,20 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
     onMouseLeave?.();
   }, [onMouseLeave]);
 
-  const ratingWidth = `${rating * 20}%`;
+  const handleFavoriteClick = useCallback(() => {
+    if (authorizationStatus !== AuthorizationStatus.Auth) {
+      navigate('/login');
+      return;
+    }
+    dispatch(toggleFavoriteAction({
+      offerId: id,
+      status: isFavorite ? 0 : 1,
+    }));
+  }, [authorizationStatus, dispatch, id, isFavorite, navigate]);
 
   return (
     <article
-      className={cardClassName}
+      className={cardClass}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -80,46 +86,34 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
           <span>Premium</span>
         </div>
       )}
-
-      <div className={imageWrapperClassName}>
+      <div className={imageWrapperClass}>
         <Link to={`/offer/${id}`}>
-          <img
-            className="place-card__image"
-            src={previewImage}
-            width={imageSize.width}
-            height={imageSize.height}
-            alt={title}
-          />
+          <img className="place-card__image" src={previewImage} width={imageSize.width} height={imageSize.height} alt="Place image" />
         </Link>
       </div>
-
       <div className={infoClass}>
         <div className="place-card__price-wrapper">
           <div className="place-card__price">
             <b className="place-card__price-value">&euro;{price}</b>
             <span className="place-card__price-text">&#47;&nbsp;night</span>
           </div>
-
           <button
-            className={bookmarkButtonClassName}
+            className={`place-card__bookmark-button ${isFavorite ? 'place-card__bookmark-button--active' : ''} button`}
             type="button"
+            onClick={handleFavoriteClick}
           >
             <svg className="place-card__bookmark-icon" width="18" height="19">
               <use xlinkHref="#icon-bookmark"></use>
             </svg>
-            <span className="visually-hidden">
-              {isFavorite ? 'Saved to favorites' : 'Save to favorites'}
-            </span>
+            <span className="visually-hidden">{isFavorite ? 'In bookmarks' : 'To bookmarks'}</span>
           </button>
         </div>
-
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
-            <span style={{ width: ratingWidth }}></span>
+            <span style={{width: `${rating * 20}%`}}></span>
             <span className="visually-hidden">Rating</span>
           </div>
         </div>
-
         <h2 className="place-card__name">
           <Link to={`/offer/${id}`}>{title}</Link>
         </h2>
