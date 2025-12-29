@@ -9,10 +9,11 @@ interface FavoritesPageProps {
 
 const FavoritesPage: React.FC<FavoritesPageProps> = ({ offers }) => {
   const offersByCity = offers.reduce<Record<string, Offer[]>>((acc, offer) => {
-    if (!acc[offer.city]) {
-      acc[offer.city] = [];
+    const cityName = offer.city.name;
+    if (!acc[cityName]) {
+      acc[cityName] = [];
     }
-    acc[offer.city].push(offer);
+    acc[cityName].push(offer);
     return acc;
   }, {});
 

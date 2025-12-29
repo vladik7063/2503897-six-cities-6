@@ -22,7 +22,7 @@ const MainPage: React.FC = () => {
     return null;
   }
 
-  const filteredOffers = offers.filter((offer) => offer.city === activeCity);
+  const filteredOffers = offers.filter((offer) => offer.city.name === activeCity);
 
   const sortedOffers = [...filteredOffers].sort((a, b) => {
     switch (activeSort) {

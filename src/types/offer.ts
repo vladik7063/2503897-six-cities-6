@@ -2,7 +2,7 @@ export type Review = {
   id: string;
   user: {
     name: string;
-    avatarUrl: string;
+    avatarUrl?: string;
   };
   rating: number;
   comment: string;
@@ -12,11 +12,17 @@ export type Review = {
 export type Location = {
   latitude: number;
   longitude: number;
+  zoom?: number;
+};
+
+export type City = {
+  name: string;
+  location: Location;
 };
 
 export type Host = {
   name: string;
-  avatarUrl: string;
+  avatarUrl?: string;
   isPro: boolean;
 };
 
@@ -24,10 +30,10 @@ export type Offer = {
   id: string;
 
   title: string;
-  description: string;
+  description?: string;
 
   type: string;
-  city: string;
+  city: City;
 
   price: number;
   rating: number;
@@ -36,12 +42,12 @@ export type Offer = {
   isFavorite: boolean;
 
   previewImage: string;
-  images: string[];
+  images?: string[];
 
-  bedrooms: number;
-  maxAdults: number;
+  bedrooms?: number;
+  maxAdults?: number;
 
-  goods: string[];
-  host: Host;
+  goods?: string[];
+  host?: Host;
   location: Location;
 };

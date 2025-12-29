@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Review } from '../types';
 import { RootState } from '../store';
 import MainPage from './main-page';
 import LoginPage from './login-page';
@@ -9,14 +8,16 @@ import FavoritesPage from './favorites-page';
 import OfferPage from './offer-page';
 import NotFoundPage from './not-found-page';
 import PrivateRoute from './private-route';
+import Spinner from './spinner';
 
-interface AppProps {
-  reviews: Review[];
-}
-
-const App: React.FC<AppProps> = ({ reviews }) => {
+const App: React.FC = () => {
   const offers = useSelector((state: RootState) => state.offers);
+  const isOffersLoading = useSelector((state: RootState) => state.isOffersLoading);
   const favoriteOffers = offers.filter((offer) => offer.isFavorite);
+
+  if (isOffersLoading) {
+    return <Spinner />;
+  }
 
   return (
     <BrowserRouter>
@@ -31,7 +32,7 @@ const App: React.FC<AppProps> = ({ reviews }) => {
             </PrivateRoute>
           }
         />
-        <Route path="/offer/:id" element={<OfferPage offers={offers} reviews={reviews}/>} />
+        <Route path="/offer/:id" element={<OfferPage offers={offers} />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
