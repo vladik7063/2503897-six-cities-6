@@ -1,6 +1,10 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../store';
+import { postCommentAction } from '../../store/api-actions';
 
 const MIN_REVIEW_LENGTH = 50;
+const MAX_REVIEW_LENGTH = 300;
 const MAX_RATING = 5;
 
 const RATING_TITLES = [
@@ -11,9 +15,16 @@ const RATING_TITLES = [
   'excellent',
 ];
 
-const ReviewForm: React.FC = () => {
+type ReviewFormProps = {
+  offerId: string;
+};
+
+const ReviewForm: React.FC<ReviewFormProps> = ({ offerId }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleRatingChange = (evt: ChangeEvent<HTMLInputElement>) => {
     setRating(Number(evt.target.value));
@@ -25,11 +36,35 @@ const ReviewForm: React.FC = () => {
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+
+    if (rating === 0 || review.length < MIN_REVIEW_LENGTH) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    dispatch(
+      postCommentAction({
+        offerId,
+        comment: review,
+        rating,
+      })
+    )
+      .then(() => {
+        setRating(0);
+        setReview('');
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
-  const isReviewValid = review.length >= MIN_REVIEW_LENGTH;
-  const isRatingSelected = rating > 0;
-  const isSubmitDisabled = !isReviewValid || !isRatingSelected;
+  const isReviewValid =
+    review.length >= MIN_REVIEW_LENGTH &&
+    review.length <= MAX_REVIEW_LENGTH;
+
+  const isSubmitDisabled =
+    !isReviewValid || rating === 0 || isSubmitting;
 
   return (
     <form
@@ -60,6 +95,7 @@ const ReviewForm: React.FC = () => {
                 type="radio"
                 checked={rating === value}
                 onChange={handleRatingChange}
+                disabled={isSubmitting}
               />
               <label
                 htmlFor={`${value}-stars`}
@@ -86,14 +122,15 @@ const ReviewForm: React.FC = () => {
         placeholder="Share details of your stay, what you liked or what could be better"
         value={review}
         onChange={handleReviewChange}
+        disabled={isSubmitting}
       />
 
       <div className="reviews__button-wrapper">
         <p className="reviews__help">
           To submit a review, please set a{' '}
-          <span className="reviews__star">rating</span> and write at least{' '}
+          <span className="reviews__star">rating</span> and write between{' '}
           <b className="reviews__text-amount">
-            {MIN_REVIEW_LENGTH} characters
+            {MIN_REVIEW_LENGTH} and {MAX_REVIEW_LENGTH} characters
           </b>.
         </p>
 

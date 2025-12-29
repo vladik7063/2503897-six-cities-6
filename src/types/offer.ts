@@ -45,6 +45,12 @@ export type Host = {
   isPro: boolean;
 };
 
+export type CommentData = {
+  offerId: string;
+  comment: string;
+  rating: number;
+};
+
 export type Offer = {
   id: string;
 
