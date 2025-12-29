@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../store';
+import { selectCity, selectOffersByCity } from '../../store/selectors';
 import { changeCity } from '../../store/action';
 import { CITIES } from '../../const/cities';
 import CityList from '../city-list';
@@ -11,37 +11,53 @@ import Header from '../header';
 
 const MainPage: React.FC = () => {
   const dispatch = useDispatch();
-  const activeCity = useSelector((state: RootState) => state.city);
-  const offers = useSelector((state: RootState) => state.offers);
+  const activeCity = useSelector(selectCity);
+  const filteredOffers = useSelector(selectOffersByCity);
 
   const [activeSort, setActiveSort] = useState<SortOption>('Popular');
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
 
-  const mapCity = CITIES.find((city) => city.name === activeCity);
+  const mapCity = useMemo(
+    () => CITIES.find((city) => city.name === activeCity),
+    [activeCity]
+  );
+
+  const sortedOffers = useMemo(() => {
+    switch (activeSort) {
+      case 'Price: low to high':
+        return filteredOffers.slice().sort((a, b) => a.price - b.price);
+      case 'Price: high to low':
+        return filteredOffers.slice().sort((a, b) => b.price - a.price);
+      case 'Top rated first':
+        return filteredOffers.slice().sort((a, b) => b.rating - a.rating);
+      case 'Popular':
+      default:
+        return filteredOffers;
+    }
+  }, [filteredOffers, activeSort]);
+
+  const handleCityChange = useCallback(
+    (city: string) => {
+      dispatch(changeCity(city));
+      setActiveOfferId(null);
+    },
+    [dispatch]
+  );
+
+  const handleOfferHover = useCallback(
+    (offerId: string) => {
+      setActiveOfferId(offerId);
+    },
+    []
+  );
+
+  const handleOfferLeave = useCallback(() => {
+    setActiveOfferId(null);
+  }, []);
+
   if (!mapCity) {
     return null;
   }
-
-  const filteredOffers = offers.filter((offer) => offer.city.name === activeCity);
-
-  const sortedOffers = [...filteredOffers].sort((a, b) => {
-    switch (activeSort) {
-      case 'Price: low to high':
-        return a.price - b.price;
-      case 'Price: high to low':
-        return b.price - a.price;
-      case 'Top rated first':
-        return b.rating - a.rating;
-      case 'Popular':
-      default:
-        return 0;
-    }
-  });
-
-  const handleCityChange = (city: string) => {
-    dispatch(changeCity(city));
-    setActiveOfferId(null);
-  };
 
   return (
     <div className="page page--gray page--main">
@@ -68,8 +84,8 @@ const MainPage: React.FC = () => {
               />
               <OffersList
                 offers={sortedOffers}
-                onOfferHover={setActiveOfferId}
-                onOfferLeave={() => setActiveOfferId(null)}
+                onOfferHover={handleOfferHover}
+                onOfferLeave={handleOfferLeave}
               />
             </section>
             <div className="cities__right-section">

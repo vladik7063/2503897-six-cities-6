@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { Offer } from '../../types/offer';
 import PlaceCard from '../place-card';
 
@@ -8,18 +8,37 @@ interface OffersListProps {
   onOfferLeave: () => void;
 }
 
-const OffersList: React.FC<OffersListProps> = ({ offers, onOfferHover, onOfferLeave }) => (
-  <div className="cities__places-list places__list tabs__content">
-    {offers.map((offer) => (
-      <PlaceCard
-        key={offer.id}
-        offer={offer}
-        variant="cities"
-        onMouseEnter={() => onOfferHover(offer.id)}
-        onMouseLeave={onOfferLeave}
-      />
-    ))}
-  </div>
-);
+const OffersList: React.FC<OffersListProps> = ({
+  offers,
+  onOfferHover,
+  onOfferLeave,
+}) => {
+  const handleMouseEnter = useCallback(
+    (offerId: string) => {
+      onOfferHover(offerId);
+    },
+    [onOfferHover]
+  );
 
-export default OffersList;
+  const handleMouseLeave = useCallback(() => {
+    onOfferLeave();
+  }, [onOfferLeave]);
+
+  return (
+    <div className="cities__places-list places__list tabs__content">
+      {offers.map((offer) => (
+        <PlaceCard
+          key={offer.id}
+          offer={offer}
+          variant="cities"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        />
+      ))}
+    </div>
+  );
+};
+
+const MemoizedOffersList = memo(OffersList);
+
+export default MemoizedOffersList;

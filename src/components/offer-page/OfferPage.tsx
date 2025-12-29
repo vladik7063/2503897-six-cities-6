@@ -1,7 +1,15 @@
 import React, { useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../../store';
+import { AppDispatch } from '../../store';
+import {
+  selectCurrentOffer,
+  selectNearbyOffers,
+  selectSortedComments,
+  selectIsOfferLoading,
+  selectIsOfferNotFound,
+  selectAuthorizationStatus,
+} from '../../store/selectors';
 import { AuthorizationStatus } from '../../types';
 import { fetchOfferAction, fetchNearbyOffersAction, fetchCommentsAction } from '../../store/api-actions';
 import ReviewForm from '../review-form';
@@ -15,12 +23,12 @@ const OfferPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams<{ id: string }>();
 
-  const offer = useSelector((state: RootState) => state.currentOffer);
-  const nearbyOffers = useSelector((state: RootState) => state.nearbyOffers);
-  const comments = useSelector((state: RootState) => state.comments);
-  const isOfferLoading = useSelector((state: RootState) => state.isOfferLoading);
-  const isOfferNotFound = useSelector((state: RootState) => state.isOfferNotFound);
-  const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
+  const offer = useSelector(selectCurrentOffer);
+  const nearbyOffers = useSelector(selectNearbyOffers);
+  const comments = useSelector(selectSortedComments);
+  const isOfferLoading = useSelector(selectIsOfferLoading);
+  const isOfferNotFound = useSelector(selectIsOfferNotFound);
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
 
   useEffect(() => {
     if (id) {

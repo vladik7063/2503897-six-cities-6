@@ -1,30 +1,29 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { CITIES } from '../../const/cities';
+import CityItem from './CityItem';
 
 interface CityListProps {
   activeCity: string;
   onCityChange: (city: string) => void;
 }
 
-const CityList: React.FC<CityListProps> = ({ activeCity, onCityChange }) => (
+const CityList: React.FC<CityListProps> = ({
+  activeCity,
+  onCityChange,
+}) => (
   <ul className="locations__list tabs__list">
     {CITIES.map((city) => (
-      <li key={city.name} className="locations__item">
-        <a
-          className={`locations__item-link tabs__item ${
-            city.name === activeCity ? 'tabs__item--active' : ''
-          }`}
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            onCityChange(city.name);
-          }}
-        >
-          <span>{city.name}</span>
-        </a>
-      </li>
+      <CityItem
+        key={city.name}
+        city={city.name}
+        isActive={city.name === activeCity}
+        onClick={onCityChange}
+      />
     ))}
   </ul>
 );
 
-export default CityList;
+const MemoizedCityList = memo(CityList);
+MemoizedCityList.displayName = 'CityList';
+
+export default MemoizedCityList;

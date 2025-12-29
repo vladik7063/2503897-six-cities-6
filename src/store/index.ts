@@ -1,12 +1,18 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
-import { reducer } from './reducer';
+import { offersReducer, userReducer, offerReducer } from './slices';
 import { createAPI } from '../services/api';
 
 const api = createAPI();
 
+const rootReducer = combineReducers({
+  offers: offersReducer,
+  user: userReducer,
+  offer: offerReducer,
+});
+
 export const store = configureStore({
-  reducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       thunk: {

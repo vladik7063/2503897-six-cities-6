@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../../store';
+import { AppDispatch } from '../../store';
+import { selectAuthorizationStatus, selectUser, selectFavoriteCount } from '../../store/selectors';
 import { AuthorizationStatus } from '../../types';
 import { logoutAction } from '../../store/api-actions';
 
@@ -11,15 +12,14 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ showNav = true }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
-  const user = useSelector((state: RootState) => state.user);
-  const offers = useSelector((state: RootState) => state.offers);
-  const favoriteCount = offers.filter((offer) => offer.isFavorite).length;
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
+  const user = useSelector(selectUser);
+  const favoriteCount = useSelector(selectFavoriteCount);
 
-  const handleLogout = (evt: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleLogout = useCallback((evt: React.MouseEvent<HTMLAnchorElement>) => {
     evt.preventDefault();
     dispatch(logoutAction());
-  };
+  }, [dispatch]);
 
   return (
     <header className="header">
@@ -67,4 +67,6 @@ const Header: React.FC<HeaderProps> = ({ showNav = true }) => {
   );
 };
 
-export default Header;
+const MemoizedHeader = memo(Header);
+
+export default MemoizedHeader;
