@@ -1,3 +1,8 @@
+export type Location = {
+  latitude: number;
+  longitude: number;
+};
+
 export type Host = {
   name: string;
   avatarUrl: string;
@@ -27,4 +32,5 @@ export type Offer = {
 
   goods: string[];
   host: Host;
+  location: Location;
 };
