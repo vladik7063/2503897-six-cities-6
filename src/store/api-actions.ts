@@ -1,11 +1,37 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { Offer } from '../types';
+import { Offer, UserData, AuthData } from '../types';
 import { AppThunkApiConfig } from './index';
+import { saveToken, dropToken } from '../services/token';
 
 export const fetchOffersAction = createAsyncThunk<Offer[], undefined, AppThunkApiConfig>(
   'offers/fetch',
   async (_arg, { extra: api }) => {
     const { data } = await api.get<Offer[]>('/offers');
     return data;
+  }
+);
+
+export const checkAuthAction = createAsyncThunk<UserData, undefined, AppThunkApiConfig>(
+  'user/checkAuth',
+  async (_arg, { extra: api }) => {
+    const { data } = await api.get<UserData>('/login');
+    return data;
+  }
+);
+
+export const loginAction = createAsyncThunk<UserData, AuthData, AppThunkApiConfig>(
+  'user/login',
+  async ({ email, password }, { extra: api }) => {
+    const { data } = await api.post<UserData>('/login', { email, password });
+    saveToken(data.token);
+    return data;
+  }
+);
+
+export const logoutAction = createAsyncThunk<void, undefined, AppThunkApiConfig>(
+  'user/logout',
+  async (_arg, { extra: api }) => {
+    await api.delete('/login');
+    dropToken();
   }
 );

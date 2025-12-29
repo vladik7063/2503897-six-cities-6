@@ -27,7 +27,7 @@ const App: React.FC = () => {
         <Route
           path="/favorites"
           element={
-            <PrivateRoute isAuthorized>
+            <PrivateRoute>
               <FavoritesPage offers={favoriteOffers} />
             </PrivateRoute>
           }

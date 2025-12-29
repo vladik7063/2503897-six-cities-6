@@ -1,13 +1,22 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
+import { AuthorizationStatus } from '../../types';
+import Spinner from '../spinner';
 
 interface PrivateRouteProps {
-  isAuthorized: boolean;
   children: React.ReactElement;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ isAuthorized, children }) => {
-  if (!isAuthorized) {
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+  const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
+
+  if (authorizationStatus === AuthorizationStatus.Unknown) {
+    return <Spinner />;
+  }
+
+  if (authorizationStatus === AuthorizationStatus.NoAuth) {
     return <Navigate to="/login" />;
   }
 
