@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Offer } from '../../types/offer';
 import OffersList from '../offers-list';
+import Map from '../map';
+import { CITIES, City } from '../../const/cities';
 
-const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
 const SORT_OPTIONS = ['Popular', 'Price: low to high', 'Price: high to low', 'Top rated first'];
 
 interface MainPageProps {
@@ -11,11 +12,13 @@ interface MainPageProps {
 }
 
 const MainPage: React.FC<MainPageProps> = ({ offers }) => {
-  const [activeCity, setActiveCity] = useState('Amsterdam');
+  const [activeCity, setActiveCity] = useState<City>(CITIES[3]);
   const [activeSortOption, setActiveSortOption] = useState('Popular');
   const [isSortOpen, setIsSortOpen] = useState(false);
 
-  const filteredOffers = offers.filter((offer) => offer.city === activeCity);
+  const filteredOffers = offers.filter(
+    (offer) => offer.city === activeCity.name
+  );
 
   return (
     <div className="page page--gray page--main">
@@ -24,16 +27,26 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
           <div className="header__wrapper">
             <div className="header__left">
               <a className="header__logo-link header__logo-link--active">
-                <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
+                <img
+                  className="header__logo"
+                  src="img/logo.svg"
+                  alt="6 cities logo"
+                  width="81"
+                  height="41"
+                />
               </a>
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
                 <li className="header__nav-item user">
-                  <Link className="header__nav-link header__nav-link--profile" to="/favorites">
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
+                  <Link
+                    className="header__nav-link header__nav-link--profile"
+                    to="/favorites"
+                  >
+                    <div className="header__avatar-wrapper user__avatar-wrapper" />
+                    <span className="header__user-name user__name">
+                      Oliver.conner@gmail.com
+                    </span>
                     <span className="header__favorite-count">3</span>
                   </Link>
                 </li>
@@ -54,27 +67,34 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
           <section className="locations container">
             <ul className="locations__list tabs__list">
               {CITIES.map((city) => (
-                <li key={city} className="locations__item">
+                <li key={city.name} className="locations__item">
                   <a
-                    className={`locations__item-link tabs__item ${city === activeCity ? 'tabs__item--active' : ''}`}
+                    className={`locations__item-link tabs__item ${
+                      city.name === activeCity.name
+                        ? 'tabs__item--active'
+                        : ''
+                    }`}
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
                       setActiveCity(city);
                     }}
                   >
-                    <span>{city}</span>
+                    <span>{city.name}</span>
                   </a>
                 </li>
               ))}
             </ul>
           </section>
         </div>
+
         <div className="cities">
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{filteredOffers.length} places to stay in {activeCity}</b>
+              <b className="places__found">
+                {filteredOffers.length} places to stay in {activeCity.name}
+              </b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
                 <span
@@ -87,11 +107,19 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
                     <use xlinkHref="#icon-arrow-select"></use>
                   </svg>
                 </span>
-                <ul className={`places__options places__options--custom ${isSortOpen ? 'places__options--opened' : ''}`}>
+                <ul
+                  className={`places__options places__options--custom ${
+                    isSortOpen ? 'places__options--opened' : ''
+                  }`}
+                >
                   {SORT_OPTIONS.map((option) => (
                     <li
                       key={option}
-                      className={`places__option ${option === activeSortOption ? 'places__option--active' : ''}`}
+                      className={`places__option ${
+                        option === activeSortOption
+                          ? 'places__option--active'
+                          : ''
+                      }`}
                       tabIndex={0}
                       onClick={() => {
                         setActiveSortOption(option);
@@ -106,7 +134,12 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
               <OffersList offers={filteredOffers} />
             </section>
             <div className="cities__right-section">
-              <section className="cities__map map"></section>
+              <section className="cities__map map">
+                <Map
+                  offers={filteredOffers}
+                  city={activeCity}
+                />
+              </section>
             </div>
           </div>
         </div>

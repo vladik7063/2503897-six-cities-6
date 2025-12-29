@@ -31,6 +31,11 @@ export const offers: Offer[] = [
       avatarUrl: 'img/avatar-max.jpg',
       isPro: true,
     },
+
+    location: {
+      latitude: 48.857,
+      longitude: 2.351,
+    },
   },
   {
     id: 'o2',
@@ -60,6 +65,11 @@ export const offers: Offer[] = [
       name: 'Maria',
       avatarUrl: 'img/avatar-angelina.jpg',
       isPro: false,
+    },
+
+    location: {
+      latitude: 52.3705,
+      longitude: 4.894,
     },
   },
   {
@@ -91,6 +101,11 @@ export const offers: Offer[] = [
       avatarUrl: 'img/avatar-max.jpg',
       isPro: true,
     },
+
+    location: {
+      latitude: 50.938,
+      longitude: 6.96,
+    },
   },
   {
     id: 'o4',
@@ -121,6 +136,47 @@ export const offers: Offer[] = [
       name: 'Hotel manager',
       avatarUrl: 'img/avatar-angelina.jpg',
       isPro: true,
+    },
+
+    location: {
+      latitude: 50.851,
+      longitude: 4.352,
+    },
+  },
+  {
+    id: 'o5',
+    title: 'Stylish apartment near park',
+    description: 'Stylish apartment near park.',
+
+    type: 'Apartment',
+    city: 'Amsterdam',
+
+    price: 120,
+    rating: 4.7,
+
+    isPremium: true,
+    isFavorite: true,
+
+    previewImage: 'img/apartment-03.jpg',
+    images: [
+      'img/apartment-03.jpg',
+      'img/apartment-02.jpg',
+      'img/apartment-01.jpg',
+    ],
+
+    bedrooms: 5,
+    maxAdults: 1,
+
+    goods: ['Wi-Fi'],
+    host: {
+      name: 'Maria',
+      avatarUrl: 'img/avatar-angelina.jpg',
+      isPro: false,
+    },
+
+    location: {
+      latitude: 52.3609553943508,
+      longitude: 4.85309666406198,
     },
   },
 ];
