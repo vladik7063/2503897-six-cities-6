@@ -1,63 +1,21 @@
-import React from 'react';
-import PlaceCard from '../place-card';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Offer } from '../../types/offer';
+import OffersList from '../offers-list';
+
+const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
+const SORT_OPTIONS = ['Popular', 'Price: low to high', 'Price: high to low', 'Top rated first'];
 
 interface MainPageProps {
-  offersCount: number;
+  offers: Offer[];
 }
 
-const MainPage: React.FC<MainPageProps> = ({ offersCount }) => {
-  const places = [
-    {
-      id: 1,
-      title: 'Beautiful & luxurious apartment at great location',
-      type: 'Apartment',
-      price: 120,
-      rating: 4,
-      image: 'img/apartment-01.jpg',
-      isPremium: true,
-      isFavorite: false,
-    },
-    {
-      id: 2,
-      title: 'Wood and stone place',
-      type: 'Room',
-      price: 80,
-      rating: 4,
-      image: 'img/room.jpg',
-      isPremium: false,
-      isFavorite: true,
-    },
-    {
-      id: 3,
-      title: 'Canal View Prinsengracht',
-      type: 'Apartment',
-      price: 132,
-      rating: 4,
-      image: 'img/apartment-02.jpg',
-      isPremium: false,
-      isFavorite: false,
-    },
-    {
-      id: 4,
-      title: 'Nice, cozy, warm big bed apartment',
-      type: 'Apartment',
-      price: 180,
-      rating: 5,
-      image: 'img/apartment-03.jpg',
-      isPremium: true,
-      isFavorite: false,
-    },
-    {
-      id: 5,
-      title: 'Wood and stone place',
-      type: 'Room',
-      price: 80,
-      rating: 4,
-      image: 'img/room.jpg',
-      isPremium: false,
-      isFavorite: true,
-    },
-  ];
+const MainPage: React.FC<MainPageProps> = ({ offers }) => {
+  const [activeCity, setActiveCity] = useState('Amsterdam');
+  const [activeSortOption, setActiveSortOption] = useState('Popular');
+  const [isSortOpen, setIsSortOpen] = useState(false);
+
+  const filteredOffers = offers.filter((offer) => offer.city === activeCity);
 
   return (
     <div className="page page--gray page--main">
@@ -72,12 +30,12 @@ const MainPage: React.FC<MainPageProps> = ({ offersCount }) => {
             <nav className="header__nav">
               <ul className="header__nav-list">
                 <li className="header__nav-item user">
-                  <a className="header__nav-link header__nav-link--profile" href="#">
+                  <Link className="header__nav-link header__nav-link--profile" to="/favorites">
                     <div className="header__avatar-wrapper user__avatar-wrapper">
                     </div>
                     <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
                     <span className="header__favorite-count">3</span>
-                  </a>
+                  </Link>
                 </li>
                 <li className="header__nav-item">
                   <a className="header__nav-link" href="#">
@@ -95,36 +53,20 @@ const MainPage: React.FC<MainPageProps> = ({ offersCount }) => {
         <div className="tabs">
           <section className="locations container">
             <ul className="locations__list tabs__list">
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Paris</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Cologne</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Brussels</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item tabs__item--active">
-                  <span>Amsterdam</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Hamburg</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Dusseldorf</span>
-                </a>
-              </li>
+              {CITIES.map((city) => (
+                <li key={city} className="locations__item">
+                  <a
+                    className={`locations__item-link tabs__item ${city === activeCity ? 'tabs__item--active' : ''}`}
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveCity(city);
+                    }}
+                  >
+                    <span>{city}</span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </section>
         </div>
@@ -132,36 +74,36 @@ const MainPage: React.FC<MainPageProps> = ({ offersCount }) => {
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offersCount} places to stay in Amsterdam</b>
+              <b className="places__found">{filteredOffers.length} places to stay in {activeCity}</b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
-                <span className="places__sorting-type" tabIndex={0}>
-                  Popular
+                <span
+                  className="places__sorting-type"
+                  tabIndex={0}
+                  onClick={() => setIsSortOpen(!isSortOpen)}
+                >
+                  {activeSortOption}
                   <svg className="places__sorting-arrow" width="7" height="4">
                     <use xlinkHref="#icon-arrow-select"></use>
                   </svg>
                 </span>
-                <ul className="places__options places__options--custom places__options--opened">
-                  <li className="places__option places__option--active" tabIndex={0}>Popular</li>
-                  <li className="places__option" tabIndex={0}>Price: low to high</li>
-                  <li className="places__option" tabIndex={0}>Price: high to low</li>
-                  <li className="places__option" tabIndex={0}>Top rated first</li>
+                <ul className={`places__options places__options--custom ${isSortOpen ? 'places__options--opened' : ''}`}>
+                  {SORT_OPTIONS.map((option) => (
+                    <li
+                      key={option}
+                      className={`places__option ${option === activeSortOption ? 'places__option--active' : ''}`}
+                      tabIndex={0}
+                      onClick={() => {
+                        setActiveSortOption(option);
+                        setIsSortOpen(false);
+                      }}
+                    >
+                      {option}
+                    </li>
+                  ))}
                 </ul>
               </form>
-              <div className="cities__places-list places__list tabs__content">
-                {places.map((place) => (
-                  <PlaceCard
-                    key={place.id}
-                    title={place.title}
-                    type={place.type}
-                    price={place.price}
-                    rating={place.rating}
-                    image={place.image}
-                    isPremium={place.isPremium}
-                    isFavorite={place.isFavorite}
-                  />
-                ))}
-              </div>
+              <OffersList offers={filteredOffers} />
             </section>
             <div className="cities__right-section">
               <section className="cities__map map"></section>
