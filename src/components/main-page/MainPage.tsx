@@ -1,24 +1,37 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Offer } from '../../types/offer';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../store';
+import { changeCity } from '../../store/action';
+import { CITIES } from '../../const/cities';
+import CityList from '../city-list';
 import OffersList from '../offers-list';
 import Map from '../map';
-import { CITIES, City } from '../../const/cities';
 
 const SORT_OPTIONS = ['Popular', 'Price: low to high', 'Price: high to low', 'Top rated first'];
 
-interface MainPageProps {
-  offers: Offer[];
-}
-
-const MainPage: React.FC<MainPageProps> = ({ offers }) => {
-  const [activeCity, setActiveCity] = useState<City>(CITIES[3]);
+const MainPage: React.FC = () => {
+  const dispatch = useDispatch();
+  const activeCity = useSelector((state: RootState) => state.city);
+  const offers = useSelector((state: RootState) => state.offers);
   const [activeSortOption, setActiveSortOption] = useState('Popular');
   const [isSortOpen, setIsSortOpen] = useState(false);
 
-  const filteredOffers = offers.filter(
-    (offer) => offer.city === activeCity.name
+  const mapCity = CITIES.find(
+    (city) => city.name === activeCity
   );
+
+  if (!mapCity) {
+    return null;
+  }
+
+  const filteredOffers = offers.filter(
+    (offer) => offer.city === activeCity
+  );
+
+  const handleCityChange = (city: string) => {
+    dispatch(changeCity(city));
+  };
 
   return (
     <div className="page page--gray page--main">
@@ -65,26 +78,7 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
         <h1 className="visually-hidden">Cities</h1>
         <div className="tabs">
           <section className="locations container">
-            <ul className="locations__list tabs__list">
-              {CITIES.map((city) => (
-                <li key={city.name} className="locations__item">
-                  <a
-                    className={`locations__item-link tabs__item ${
-                      city.name === activeCity.name
-                        ? 'tabs__item--active'
-                        : ''
-                    }`}
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setActiveCity(city);
-                    }}
-                  >
-                    <span>{city.name}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <CityList activeCity={activeCity} onCityChange={handleCityChange} />
           </section>
         </div>
 
@@ -93,7 +87,7 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
               <b className="places__found">
-                {filteredOffers.length} places to stay in {activeCity.name}
+                {filteredOffers.length} places to stay in {activeCity}
               </b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
@@ -137,7 +131,7 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
               <section className="cities__map map">
                 <Map
                   offers={filteredOffers}
-                  city={activeCity}
+                  city={mapCity}
                 />
               </section>
             </div>
