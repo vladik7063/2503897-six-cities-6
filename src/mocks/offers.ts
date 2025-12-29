@@ -179,4 +179,113 @@ export const offers: Offer[] = [
       longitude: 4.85309666406198,
     },
   },
+  {
+    id: 'o7',
+    title: 'Modern apartment with balcony',
+    description: 'Modern apartment with a great city view.',
+
+    type: 'apartment',
+    city: 'Paris',
+
+    price: 220,
+    rating: 4.9,
+
+    isPremium: true,
+    isFavorite: false,
+
+    previewImage: 'img/apartment-02.jpg',
+    images: [
+      'img/apartment-02.jpg',
+      'img/apartment-01.jpg',
+      'img/apartment-03.jpg',
+    ],
+
+    bedrooms: 3,
+    maxAdults: 5,
+
+    goods: ['Wi-Fi', 'Kitchen', 'Washer'],
+    host: {
+      name: 'Jean',
+      avatarUrl: 'img/avatar-max.jpg',
+      isPro: true,
+    },
+
+    location: {
+      latitude: 48.853,
+      longitude: 2.349,
+    },
+  },
+
+  {
+    id: 'o8',
+    title: 'Budget room near metro',
+    description: 'Affordable room close to public transport.',
+
+    type: 'room',
+    city: 'Paris',
+
+    price: 60,
+    rating: 3.8,
+
+    isPremium: false,
+    isFavorite: false,
+
+    previewImage: 'img/room.jpg',
+    images: [
+      'img/room.jpg',
+      'img/apartment-02.jpg',
+    ],
+
+    bedrooms: 1,
+    maxAdults: 1,
+
+    goods: ['Wi-Fi'],
+    host: {
+      name: 'Lucas',
+      avatarUrl: 'img/avatar-max.jpg',
+      isPro: false,
+    },
+
+    location: {
+      latitude: 48.865,
+      longitude: 2.360,
+    },
+  },
+
+  {
+    id: 'o9',
+    title: 'Luxury penthouse in city center',
+    description: 'Exclusive penthouse for premium stay.',
+
+    type: 'apartment',
+    city: 'Paris',
+
+    price: 350,
+    rating: 5.0,
+
+    isPremium: true,
+    isFavorite: true,
+
+    previewImage: 'img/apartment-03.jpg',
+    images: [
+      'img/apartment-03.jpg',
+      'img/apartment-01.jpg',
+      'img/apartment-02.jpg',
+    ],
+
+    bedrooms: 4,
+    maxAdults: 6,
+
+    goods: ['Wi-Fi', 'Kitchen', 'Air conditioning'],
+    host: {
+      name: 'Claire',
+      avatarUrl: 'img/avatar-angelina.jpg',
+      isPro: true,
+    },
+
+    location: {
+      latitude: 48.850,
+      longitude: 2.355,
+    },
+  },
 ];

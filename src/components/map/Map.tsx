@@ -13,6 +13,7 @@ type MapProps = {
       zoom: number;
     };
   };
+  activeOfferId?: string | null;
 };
 
 const DEFAULT_ICON = leaflet.icon({
@@ -21,7 +22,13 @@ const DEFAULT_ICON = leaflet.icon({
   iconAnchor: [13.5, 39],
 });
 
-const Map: React.FC<MapProps> = ({ offers, city }) => {
+const ACTIVE_ICON = leaflet.icon({
+  iconUrl: 'img/pin-active.svg',
+  iconSize: [27, 39],
+  iconAnchor: [13.5, 39],
+});
+
+const Map: React.FC<MapProps> = ({ offers, city, activeOfferId }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<leaflet.Map | null>(null);
   const markersLayerRef = useRef<leaflet.LayerGroup | null>(null);
@@ -74,7 +81,10 @@ const Map: React.FC<MapProps> = ({ offers, city }) => {
             lng: offer.location.longitude,
           },
           {
-            icon: DEFAULT_ICON,
+            icon:
+              offer.id === activeOfferId
+                ? ACTIVE_ICON
+                : DEFAULT_ICON,
           }
         )
       )
@@ -82,7 +92,7 @@ const Map: React.FC<MapProps> = ({ offers, city }) => {
 
     markersLayer.addTo(mapInstanceRef.current);
     markersLayerRef.current = markersLayer;
-  }, [offers]);
+  }, [offers, activeOfferId]);
 
   return (
     <div
