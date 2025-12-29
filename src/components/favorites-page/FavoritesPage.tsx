@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Offer } from '../../types/offer';
 import PlaceCard from '../place-card';
@@ -9,16 +9,17 @@ interface FavoritesPageProps {
 }
 
 const FavoritesPage: React.FC<FavoritesPageProps> = ({ offers }) => {
-  const offersByCity = offers.reduce<Record<string, Offer[]>>((acc, offer) => {
-    const cityName = offer.city.name;
-    if (!acc[cityName]) {
-      acc[cityName] = [];
-    }
-    acc[cityName].push(offer);
-    return acc;
-  }, {});
+  const offersByCity = useMemo(() =>
+    offers.reduce<Record<string, Offer[]>>((acc, offer) => {
+      const cityName = offer.city.name;
+      if (!acc[cityName]) {
+        acc[cityName] = [];
+      }
+      acc[cityName].push(offer);
+      return acc;
+    }, {}), [offers]);
 
-  const cities = Object.keys(offersByCity);
+  const cities = useMemo(() => Object.keys(offersByCity), [offersByCity]);
 
   return (
     <div className="page">
@@ -62,4 +63,6 @@ const FavoritesPage: React.FC<FavoritesPageProps> = ({ offers }) => {
   );
 };
 
-export default FavoritesPage;
+const MemoizedFavoritesPage = memo(FavoritesPage);
+
+export default MemoizedFavoritesPage;

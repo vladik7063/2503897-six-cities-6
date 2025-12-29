@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useEffect, memo } from 'react';
 import leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Offer } from '../../types/offer';
@@ -104,4 +104,6 @@ const Map: React.FC<MapProps> = ({ offers, city, activeOfferId }) => {
   );
 };
 
-export default Map;
+const MemoizedMap = memo(Map);
+
+export default MemoizedMap;

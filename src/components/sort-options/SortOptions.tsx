@@ -1,34 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, memo, useCallback } from 'react';
+
 import { SORT_OPTIONS, SortOption } from './constants';
 
 type SortOptionsProps = {
   activeSortOption: SortOption;
-  onChange: (option: SortOption) => void;
+  onChange: (sortOption: SortOption) => void;
 };
 
-const SortOptions: React.FC<SortOptionsProps> = ({
-  activeSortOption,
-  onChange,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
+const SortOptions: React.FC<SortOptionsProps> = ({ activeSortOption, onChange }) => {
+  const [isSortOpen, setIsSortOpen] = useState(false);
 
-  const handleToggle = () => {
-    setIsOpen((prev) => !prev);
-  };
+  const handleToggle = useCallback(() => {
+    setIsSortOpen((prev) => !prev);
+  }, []);
 
-  const handleOptionClick = (option: SortOption) => {
+  const handleOptionClick = useCallback((option: SortOption) => {
     onChange(option);
-    setIsOpen(false);
-  };
-
-  const optionsClassName = `places__options places__options--custom ${
-    isOpen ? 'places__options--opened' : ''
-  }`;
+    setIsSortOpen(false);
+  }, [onChange]);
 
   return (
     <form className="places__sorting" action="#" method="get">
       <span className="places__sorting-caption">Sort by</span>
-
       <span
         className="places__sorting-type"
         tabIndex={0}
@@ -36,19 +29,14 @@ const SortOptions: React.FC<SortOptionsProps> = ({
       >
         {activeSortOption}
         <svg className="places__sorting-arrow" width="7" height="4">
-          <use xlinkHref="#icon-arrow-select" />
+          <use xlinkHref="#icon-arrow-select"></use>
         </svg>
       </span>
-
-      <ul className={optionsClassName}>
+      <ul className={`places__options places__options--custom ${isSortOpen ? 'places__options--opened' : ''}`}>
         {SORT_OPTIONS.map((option) => (
           <li
             key={option}
-            className={`places__option ${
-              option === activeSortOption
-                ? 'places__option--active'
-                : ''
-            }`}
+            className={`places__option ${option === activeSortOption ? 'places__option--active' : ''}`}
             tabIndex={0}
             onClick={() => handleOptionClick(option)}
           >
@@ -60,4 +48,6 @@ const SortOptions: React.FC<SortOptionsProps> = ({
   );
 };
 
-export default SortOptions;
+const MemoizedSortOptions = memo(SortOptions);
+
+export default MemoizedSortOptions;

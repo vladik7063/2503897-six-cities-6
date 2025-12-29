@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Offer } from '../../types/offer';
 
@@ -59,13 +59,13 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
     ? 'place-card__bookmark-button place-card__bookmark-button--active button'
     : 'place-card__bookmark-button button';
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     onMouseEnter?.(id);
-  };
+  }, [id, onMouseEnter]);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     onMouseLeave?.();
-  };
+  }, [onMouseLeave]);
 
   const ratingWidth = `${rating * 20}%`;
 
@@ -129,4 +129,6 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
   );
 };
 
-export default PlaceCard;
+const MemoizedPlaceCard = memo(PlaceCard);
+
+export default MemoizedPlaceCard;

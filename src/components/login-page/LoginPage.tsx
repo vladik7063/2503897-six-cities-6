@@ -1,13 +1,14 @@
 import React, { useState, FormEvent } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store';
+import { AppDispatch } from '../../store';
+import { selectAuthorizationStatus } from '../../store/selectors';
 import { loginAction } from '../../store/api-actions';
 import { AuthorizationStatus } from '../../types';
 
 const LoginPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
