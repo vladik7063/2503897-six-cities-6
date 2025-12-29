@@ -1,6 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
-import { offersReducer, userReducer, offerReducer } from './slices';
+import { offersReducer, userReducer, offerReducer, favoritesReducer } from './slices';
 import { createAPI } from '../services/api';
 
 const api = createAPI();
@@ -9,6 +9,7 @@ const rootReducer = combineReducers({
   offers: offersReducer,
   user: userReducer,
   offer: offerReducer,
+  favorites: favoritesReducer,
 });
 
 export const store = configureStore({

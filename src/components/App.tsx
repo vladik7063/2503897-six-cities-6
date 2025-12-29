@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectIsOffersLoading, selectFavoriteOffers } from '../store/selectors';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectIsOffersLoading, selectFavoriteOffers, selectAuthorizationStatus } from '../store/selectors';
+import { fetchFavoritesAction } from '../store/api-actions';
+import { AuthorizationStatus } from '../types';
+import { AppDispatch } from '../store';
 import MainPage from './main-page';
 import LoginPage from './login-page';
 import FavoritesPage from './favorites-page';
@@ -11,8 +14,17 @@ import PrivateRoute from './private-route';
 import Spinner from './spinner';
 
 const App: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const isOffersLoading = useSelector(selectIsOffersLoading);
   const favoriteOffers = useSelector(selectFavoriteOffers);
+
+  const authorizationStatus = useSelector(selectAuthorizationStatus);
+
+  useEffect(() => {
+    if (authorizationStatus === AuthorizationStatus.Auth) {
+      dispatch(fetchFavoritesAction());
+    }
+  }, [authorizationStatus, dispatch]);
 
   if (isOffersLoading) {
     return <Spinner />;

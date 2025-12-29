@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store';
 import {
@@ -11,7 +11,7 @@ import {
   selectAuthorizationStatus,
 } from '../../store/selectors';
 import { AuthorizationStatus } from '../../types';
-import { fetchOfferAction, fetchNearbyOffersAction, fetchCommentsAction } from '../../store/api-actions';
+import { fetchOfferAction, fetchNearbyOffersAction, fetchCommentsAction, toggleFavoriteAction } from '../../store/api-actions';
 import ReviewForm from '../review-form';
 import ReviewsList from '../reviews-list';
 import PlaceCard from '../place-card';
@@ -21,6 +21,8 @@ import Spinner from '../spinner';
 
 const OfferPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
   const { id } = useParams<{ id: string }>();
 
   const offer = useSelector(selectCurrentOffer);
@@ -37,6 +39,19 @@ const OfferPage: React.FC = () => {
       dispatch(fetchCommentsAction(id));
     }
   }, [dispatch, id]);
+
+  const handleFavoriteClick = () => {
+    if (authorizationStatus !== AuthorizationStatus.Auth) {
+      navigate('/login');
+      return;
+    }
+    if (offer) {
+      dispatch(toggleFavoriteAction({
+        offerId: offer.id,
+        status: offer.isFavorite ? 0 : 1,
+      }));
+    }
+  };
 
   if (isOfferLoading) {
     return <Spinner />;
@@ -76,7 +91,7 @@ const OfferPage: React.FC = () => {
                 <h1 className="offer__name">
                   {offer.title}
                 </h1>
-                <button className={`offer__bookmark-button button ${offer.isFavorite ? 'offer__bookmark-button--active' : ''}`} type="button">
+                <button className={`offer__bookmark-button button ${offer.isFavorite ? 'offer__bookmark-button--active' : ''}`} type="button" onClick={handleFavoriteClick}>
                   <svg className="offer__bookmark-icon" width="31" height="33">
                     <use xlinkHref="#icon-bookmark"></use>
                   </svg>
